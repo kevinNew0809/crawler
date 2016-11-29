@@ -1,0 +1,56 @@
+# crawler
+美評網爬蟲程式
+
+#下載店名
+library(xml2)
+as.character(get)
+a=list()
+get=list()
+for(i in 1:43)
+{
+  a[[i]]<-paste0("https://www.maybee.com.tw/maps_list/index?ToPage=",i,"&ToPage_data=")
+  url=a[[i]]
+  doc=read_html(url)
+  xpath2<-"//ul[@class='results-list']/li[@class='results-item collapsed']/div[@class='venue-summary']/div[@class='title']/a"
+  get[[i]]<-xml_text(xml_find_all(doc,xpath2))
+}
+get
+
+
+getwd()
+setwd("C:/Users/kevin/Desktop")
+get.sub<-get[-43]
+get.sub<-as.data.frame(get.sub)
+write.csv(get.sub, file = "data.csv")
+
+#下載敘述
+library(xml2)
+as.character(get)
+a=list()
+get=list()
+for(i in 1:43)
+{
+  a[[i]]<-paste0("https://www.maybee.com.tw/maps_list/index?ToPage=",i,"&ToPage_data=")
+  url=a[[i]]
+  doc=read_html(url)
+  xpath2<-"//ul[@class='results-list']/li[@class='results-item collapsed']/div[@class='venue-summary']/div[@class='venue-description']/span[@class='action-uri']"
+  get[[i]]<-xml_text(xml_find_all(doc,xpath2))
+}
+get
+
+getwd()
+setwd("C:/Users/kevin/Desktop")
+get.sub<-get[-43]
+get.sub<-as.data.frame(get.sub)
+write.csv(get.sub, file = "data1.csv")
+
+
+
+a<-("https://www.maybee.com.tw/maps_list/index")
+url<-a
+doc=read_html(url)
+xpath<-"//ul[@class='results-list'][1]/li[@class='results-item collapsed']/div[@id='table_knowledge']/table[1]/tbody/tr/td[2]/a[@id='cart_1s']/button[@class='ybuttom']"
+get<-xml_text(xml_find_all(doc,xpath))
+get
+
+?xml_text
