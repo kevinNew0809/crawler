@@ -1,0 +1,137 @@
+library(tmcn)
+library(XML)
+library(httr)
+library(stringr)
+
+
+#Sys.sleep(900)
+
+
+collect=list()
+explorer=list()
+article=list()
+ghj=list()
+get_list=data.frame()
+rank_people=list()
+rating=list()
+ranking=list()
+category=list()
+price=list()
+address=list()
+
+
+for(j in 1:165)
+{
+  url = paste0("http://www.ipeen.com.tw/search/taiwan/000/1-0-4-0/?p=",j)
+  res = GET(url)
+  restext = htmlParse(res)
+  text = xpathSApply(restext,sprintf("//*[@id='shop_h3_%s']/a",1:15),xmlAttrs)
+  value = xpathSApply(restext,sprintf("//*[@id='shop_h3_%s']/a",1:15),xmlValue)
+  getlink<-toUTF8(text)
+  
+  #���o���|
+  link=list()
+  for(a in 1:15)
+  {
+    if(a==1)
+    {
+      i=a
+    }
+    else
+    {
+      i=(a-1)*6+1
+    }
+    link[[a]]=getlink[i]
+  }
+  for(i in 1:15)
+  {
+    url=paste0("http://www.ipeen.com.tw",link[i])
+    res = GET(url)
+    restext = htmlParse(res)
+    price[[i]] = xpathSApply(restext,"//p[@class='cost i']",xmlValue)
+    price[i] = str_extract(price[i],"[0-9]+ ��")
+    
+    category[[i]] = xpathSApply(restext,"//p[@class='cate i']/a[@class='ga_tracking']",xmlValue)
+    
+    rating[[i]] = xpathSApply(restext,"//p[@class='rating']",xmlValue)
+    C=str_extract_all(rating[i],"[0-9][0-9]")
+    C = unlist(C)
+    a<-as.numeric(C[1])
+    b<-as.numeric(C[2])
+    ranking[[i]]=a/b
+    rank_people[[i]]=xpathSApply(restext,"//p[@class='rating']/em",xmlValue)
+    address[[i]] = xpathSApply(restext,"//p[@class='addr i']",xmlValue)
+    address[i]=str_replace_all(address[i],"\n","")
+    address[i]=str_replace_all(address[i],"\t","")
+    address[i]=str_trim(address[i], side = c("both", "left", "right"))
+    article[[i]] = xpathSApply(restext,"//div[@class='scalar']/p[4]",xmlValue)
+    article[i]=str_extract_all(article[i],"[0-9]+")
+    explorer[[i]] = xpathSApply(restext,"//div[@class='scalar']/p[3]",xmlValue)
+    explorer[i]=str_replace_all(explorer[i],",","")
+    explorer[i]=str_extract_all(explorer[i],"[0-9]+")
+    collect[[i]] = xpathSApply(restext,"//div[@id='shop-header']/nav/ul/li[3]",xmlValue)
+    collect[i]=str_replace(collect[i],"\n","")
+    collect[i]=str_replace(collect[i],"\r","")
+    collect[i]=str_extract_all(collect[i],"[0-9]+")
+    #getlist
+    get_list[i,1]<-value[i]
+    get_list[i,2]<-category[i]
+    get_list[i,3]<-price[i]
+    get_list[i,4]<-ranking[i]
+    get_list[i,5]<-rank_people[i]
+    get_list[i,6]<-address[i]
+    get_list[i,7]<-article[i]
+    get_list[i,8]<-explorer[i]
+    get_list[i,9]<-collect[i]
+  }
+  if(j%%3==0)
+  {
+    Sys.sleep(5)
+  }
+  number=j
+  ghj[[number]]= get_list
+  cat(j,"\n")
+}
+ghj=do.call(rbind,ghj)
+View(ghj)
+
+
+setwd("C:/Users/GuanYu/Desktop/123456")
+getwd()
+write.csv(ghj,"����5.csv")
+
+
+
+
+cat(j)
+get_list
+
+total[1][1]<-value[1]
+total[1][2]<category[1]
+
+
+total
+
+ranking[3]
+
+
+total=list()
+total[i][1]=value[i]
+total[[i]][2]<-category[i]
+total[[i]][3]<-price[i]
+total[[i]][4]<-ranking[i]
+total[[i]][5]<-rank_people[i]
+total[[i]][6]<-address[i]
+
+
+
+
+
+
+
+
+address[1]
+h=str_extract(price[1],"[0-9]+ ��")
+a<-as.numeric(C[1])
+b<-as.numeric(C[2])
+a/b
